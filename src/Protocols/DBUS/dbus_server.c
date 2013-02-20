@@ -38,7 +38,9 @@
 #include "nfs_core.h"
 #include "log.h"
 #include "nfs_rpc_callback.h"
+#ifdef USE_DBUS
 #include "ganesha_dbus.h"
+#endif
 
 /**
  *

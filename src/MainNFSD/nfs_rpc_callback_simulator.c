@@ -41,7 +41,9 @@
 #include "nfs_rpc_callback.h"
 #include "nfs_rpc_callback_simulator.h"
 #include "sal_functions.h"
+#ifdef USE_DBUS
 #include "ganesha_dbus.h"
+#endif
 
 /**
  * @file nfs_rpc_callback_simulator.c
