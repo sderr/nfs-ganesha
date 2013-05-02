@@ -68,7 +68,7 @@ typedef uint64_t u64;
 #define _9P_IOUNIT   0
 
 /* _9P_RDMA_CHUNK_SIZE : buffer size, and maximum message size for 9P/RDMA */
-#define _9P_RDMA_CHUNK_SIZE (1024*1024)
+#define _9P_RDMA_CHUNK_SIZE (2*1024*1024)
 #define _9P_RDMA_BUFF_NUM 100 
 /* Half the buffers are for recv, half for send */
 #define _9P_RDMA_OUT (_9P_RDMA_BUFF_NUM/2)
