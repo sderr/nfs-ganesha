@@ -100,7 +100,7 @@ int _9p_lcreate( _9p_request_data_t * preq9p,
    cache_status = cache_inode_create(pfid->pentry,
 				     file_name,
 				     REGULAR_FILE,
-				     *mode,
+				     0644,
 				     NULL,
 				     &pfid->op_context,
 				     &pentry_newfile);
@@ -119,6 +119,28 @@ int _9p_lcreate( _9p_request_data_t * preq9p,
 				   0);
    if(cache_status != CACHE_INODE_SUCCESS)
      return  _9p_rerror( preq9p, pworker_data,  msgtag, _9p_tools_errno( cache_status ), plenout, preply ) ;
+
+   /* The file has been created with mode 0644 to make sure the open
+    * would succeed.
+    * Indeed, man open(2) says:
+    * `mode  only  applies  to  future
+    *  accesses of the newly created file; the open() call that creates
+    *  a read-only file may well return a read/write file descriptor.'
+    * Now that the file is open, change mode, if needed.
+    */
+   if (*mode != 0644) {
+        struct attrlist       fsalattr ;
+        memset( (char *)&fsalattr, 0, sizeof( fsalattr ) ) ;
+        FSAL_SET_MASK(fsalattr.mask, ATTR_MODE);
+        fsalattr.mode = *mode ;
+        cache_status = cache_inode_setattr(pentry_newfile,
+				     &fsalattr,
+				     &pfid->op_context);
+        /* Hmmmm... this error handling will leave a mess behind. */
+        if(cache_status != CACHE_INODE_SUCCESS)
+                return  _9p_rerror( preq9p, pworker_data,  msgtag, _9p_tools_errno( cache_status ), plenout, preply ) ;
+  }
+
 
    /* Build the qid */
    qid_newfile.type    = _9P_QTFILE ;
